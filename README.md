@@ -1,4 +1,4 @@
-# MTC-MobileApp
+# APP-Remuneracao
 <Description>
 
 - Frontend EntryPoint: App.js
