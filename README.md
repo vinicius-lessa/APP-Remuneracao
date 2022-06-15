@@ -29,13 +29,14 @@
     - Description: ... (TradePost.js)
     - command: $ npm i apisauce --save
 
-- EAS Cli
-    - Description: EAS Build is a new and rapidly evolving service.
-    - Docs: https://docs.expo.dev/build/setup/ (App Store) - https://docs.expo.dev/build-reference/apk/ (APK)
-    - command: $ npm install -g eas-cli
-
 - React Native Mask Input
     - Description: A simple and effective Text Input with mask for ReactNative on iOS, Android, and Web.
     - Docs: https://www.npmjs.com/package/react-native-mask-input - https://github.com/CaioQuirinoMedeiros/react-native-mask-input
     - command(s):
         - $ npm install react-native-mask-input
+
+- Expo Linking
+    - Description: ...
+    - Docs: https://reactnavigation.org/docs/deep-linking/ - https://docs.expo.dev/guides/linking/
+    - command(s):
+        - $ expo install expo-linking

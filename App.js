@@ -63,7 +63,7 @@ export default function App() {
 
         {/* TradePostDetailed - Index: 12 */}
         <Stack.Screen
-          name="ShowResult"
+          name="Resultados"
           component={ShowResult} 
           options={{            
             unmountOnBlur: true,

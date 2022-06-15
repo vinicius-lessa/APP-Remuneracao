@@ -138,7 +138,7 @@ const css = StyleSheet.create({
 
   // Background Colors
   bkGray:       { backgroundColor: '#1C2124' } ,
-  bkLightgray:  { backgroundColor: '#5e5f60' } ,  
+  bkLightgray:  { backgroundColor: '#5e5f60' } ,
   bkRed:        { backgroundColor: '#eb1f36' } ,
   bkWhite:      { backgroundColor: '#edebeb' } ,
   bkYellow:     { backgroundColor: '#ccd304' } , 
@@ -209,21 +209,11 @@ const css = StyleSheet.create({
     borderRadius: 15 ,    
   } ,
 
-  inputTextArea: (isFocused=false) => ({
-    textAlign: (isFocused ? 'left' : 'center') ,    
-    textAlignVertical: (isFocused ? 'top' : 'center') ,
-    borderWidth: 1 ,
-    borderColor: '#d3d1d1' ,
-    borderRadius: 20 ,
-    backgroundColor : "#fff" ,
-    height:100 ,    
-  }) ,
-
   // Visual
   hrDefault: {
     borderBottomColor: '#434343',
-    borderBottomWidth: 1,
-    marginVertical: 15 ,
+    borderBottomWidth: .6,
+    marginVertical: 5 ,
   } ,
 
   // Buttons
@@ -233,239 +223,8 @@ const css = StyleSheet.create({
     paddingVertical: 8 ,
     alignSelf: 'center' ,
     alignItems: 'center' ,
-  } ,
-
-  // ############ TradePosts.js
-  tradePostRow: {
-    width: '100%' ,
-    height: 150 ,
-    marginVertical: 5 ,
-    padding: 5 ,    
-    alignItems: 'center' ,
-    // backgroundColor: "steelblue",
-  } ,
-
-  tpImgBox: {
-    width: '40%' ,
-    height: '100%' ,
-    borderRadius: 10 ,
-    backgroundColor: '#adadae3a' ,    
   } ,  
-
-  imgDefault: {
-    width: '100%' ,
-    height: '100%' ,    
-  } ,  
-
-  tpDescriptionBox: {
-    width: '60%' ,
-    height: '100%' ,
-    paddingStart: 10 ,
-    paddingEnd: 5 ,
-    // backgroundColor: 'purple'
-  } ,
-
-  tradePostTitle:{    
-    fontSize: 18 ,
-    color:'#fff'    
-  } ,
-
-  tpInfoBox: {
-    paddingVertical: 5 ,
-    // backgroundColor: 'darkorange' ,
-  } ,  
-
-
-  // ############ Welcome
-  buttonWelcome:{
-    width: '50%',
-    backgroundColor: '#eb1f36',
-    borderRadius: 50,
-    paddingVertical: 10
-  } ,
-
-
-  // ############ SignIn
-  loginMsg: {
-    color: "#eb1f36",
-    display: 'flex' ,
-  } ,
-
-  // ############ Header
-  profileImageHeader: {
-    width: 60 ,
-    height: 60 ,
-    borderRadius: 40 ,
-    borderWidth: 2 ,
-    borderColor: '#eb1f36'
-  } ,
-
-  // ############ SideBar
-  profileImageSideBar: {
-    width: 100 ,
-    height: 100 ,
-    borderRadius: 50 ,
-    borderWidth: 2 ,
-    borderColor: '#eb1f36'
-  } ,
-
-  // ############ NewTrade Post
-
-  // ############ Trade Post Detailed
-  imgDetailedRow: {
-    width: '100%' ,
-    height: 270 ,
-    marginVertical: 5 ,
-    padding: 5 ,    
-    alignItems: 'center' ,
-  } ,
-
-  tpDetailedImgBox: {
-    width: '100%' ,
-    height: '100%' ,
-    borderRadius: 10 ,
-    backgroundColor: '#adadae3a' ,    
-  } ,
-
-  // ############ UserProfile
-  profileImage: {
-    width: 250 ,
-    height: 250 ,
-    borderRadius: 125 ,
-  } ,
-
-  // ############ Chat List
-  profileImage: {
-    width: 250 ,
-    height: 250 ,
-    borderRadius: 125 ,
-  } ,
-    
-  chatList: {
-    backgroundColor: '#383a3b' ,
-    margin: 6 ,
-    padding: 5 ,
-    borderRadius: 5 ,    
-  } ,
-
-  chatListRow: {    
-    marginVertical: 5 ,
-    padding: 5 ,
-    height: 90 ,
-    width: '100%' ,
-    flexDirection: 'row' ,
-    alignItems: 'center' ,
-    backgroundColor: '#151516' ,
-    borderRadius: 5 ,
-  } ,
-
-  chatListImgBox: {
-    width: '25%' ,
-    height: '100%' ,
-  } ,
-
-  chatListDescBox: {
-    width: '75%' ,
-    height: '100%' ,     
-  } ,
-
-  hrChatList: {
-    borderBottomColor: '#2b2a2a',
-    borderBottomWidth: .6,
-    marginVertical: 8,
-  } ,
-
-  profileImageChatList: {
-    width: 80 ,
-    height: 80 ,
-    borderRadius: 90 ,
-    alignSelf: 'center'
-  } ,
-
-  // ############ Chat Messages
-  chatMessageBox: {
-    backgroundColor: '#383a3b' ,
-    margin: 5 ,
-    borderRadius: 10 ,
-  } ,
-
-  hrChatHeader: {
-    borderBottomColor: '#2b2a2a',
-    borderBottomWidth: .6,
-    marginVertical: 0,
-  } ,
-
-  chatImgBox: {
-    width: '32%' ,
-    height: '100%' ,
-    borderRadius: 10 ,
-    backgroundColor: '#adadae3a' ,
-  } ,
-
-  chatDescriptionBox: {
-    width: '68%' ,
-    height: '100%' ,
-    paddingStart: 10 ,
-    paddingEnd: 5 ,    
-  } ,
-
-  selfMessageBox: {
-    paddingHorizontal: 5 ,
-    paddingVertical: 8 ,
-    borderRadius: 5 ,
-    marginVertical: 6,
-    marginHorizontal: 5,
-    width: '80%' ,
-    alignSelf: 'flex-end' ,
-    backgroundColor: '#542020' ,
-  } ,
-
-  userTwoMessageBox: {
-    padding: 5 ,
-    borderRadius: 5 ,
-    marginVertical: 6,
-    marginHorizontal: 5,
-    width: '80%'
-  } ,
-
-  inputChatMessage:{
-    textAlign: 'left' ,
-    paddingHorizontal: 5 ,
-    color: '#000' ,
-    height: '90%' ,
-    borderWidth: .8 ,    
-    borderRadius: 10 ,
-    backgroundColor : "#fff" ,
-  } ,
 
 });
 
-// Especific Style used whitin "SignUp" and "NewTradePost" screen's
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    color: '#000',    
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    textAlign: 'center' ,
-    alignContent: 'center' ,
-    height: 50 ,
-    borderWidth: 1 ,
-    borderColor: '#d3d1d1' ,
-    borderRadius: 20 ,
-    backgroundColor : "#fff" ,    
-  } ,
-  inputAndroid: {
-    color: '#000',    
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    textAlign: 'center' ,
-    alignContent: 'center' ,
-    height: 50 ,
-    borderWidth: 1 ,
-    borderColor: '#d3d1d1' ,
-    borderRadius: 20 ,
-    backgroundColor : "#fff" ,    
-  } ,
-});
-
-export{ css, pickerSelectStyles };
+export{ css };

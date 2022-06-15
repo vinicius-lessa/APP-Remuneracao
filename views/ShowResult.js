@@ -3,7 +3,7 @@
  * 
  * @Description Página considadera 'Home'. Aqui serão exibidos todos os Anúncios presentes no Banco de Dados em forma de Lista.
  * @ChangeLog 
- *  - Vinícius Lessa - 18/05/2022: Mudança do nome do arquivo de 'Home' para 'TradePosts', seguindo padrão WEB. Mudanças estruturais e visuais.
+ *  - Vinícius Lessa - 15/06/2022: Adaptação do arquivo para receber os parâmetros da página 'SearchCps' e em seguida carregar os itens via requisição API.
  * 
  */
 
@@ -16,237 +16,201 @@ import {
     ScrollView ,
 } from 'react-native'; // Core Components
 
+// API Sauce
+import api from '../services/api';
 
 import { css } from '../assets/css/css.js'; // Style - css
 
 import LoadingIcon from './components/LoadingDefault'; // Loading Component
 
+import * as Linking from 'expo-linking';
 
-// Trade Post Row Component
-const TpRow = (props) => {  
 
-return (
-    <View style = {[
-    css.tradePostRow ,
-    props.rowReverse ? css.rowReverseOrientation : css.rowOrientation ,
-    { width: "auto", minWidth: 100, },
-    ]}>
-    {/* Image */}
-    <View style={css.tpImgBox}>
-        <Animatable.Image
-        animation="flipInY"
-        source={ {uri: props.uri } }
-        resizeMode = "contain"
-        style={ css.imgDefault }
-        />
-    </View>
+// Person Row Component
+const ResultRow = (props) => {  
 
-    {/* TP Info */}
-    <View style={css.tpDescriptionBox}>
-        
-        {/* TP Title */}
-        <Text style={ [css.tradePostTitle, css.fontGhotic ] }>
-        { props.title.length < 40 ? props.title : props.title.substring(0, 40) + "..." }
-        </Text>
+    let wage = props.wage;
+    let formatedWage = "R$" + wage.replace(".",",");
 
-        {/* TP General Info */}
-        <View style = { css.tpInfoBox }>
-        <Text style={ [ css.size16, css.fontGhotic ] }>
-            <Text style={ [ css.textRed ] }>Categoria: </Text>
-            <Text style={ [ css.textWhite ] }>              
-            { props.cateogory.length < 13 ? props.cateogory : props.cateogory.substring(0, 13) + "..." } 
+    return (
+        <View style = {[
+            css.flexOne ,            
+            css.centerVerticaly ,
+            css.centerChildren ,
+            css.p_Two,
+            { minHeight: 90 }
+        ]}>
+            <Text style={[
+                css.textBlack ,
+                css.size14 ,
+                css.m_OneY ,
+            ]}>
+                Nome: <Text style={[ css.textRed, css.size16, css.fontBold ]} >{props.name}</Text>
             </Text>
-        </Text>
 
-        <Text style={ [ css.size16, css.fontGhotic ] }>
-            <Text style={ [ css.textRed, css.fontGhotic ] }>Por: </Text>
-            <Text style={ [ css.textWhite, css.fontGhotic ] }>
-            { props.creator.length < 20 ? props.creator : props.creator.substring(0, 20) + "..." }
+            <Text style={[
+                css.textBlack ,
+                css.size14 ,
+                css.m_OneY ,
+            ]}>
+                Cargo: <Text style={[ css.textRed, css.size16, css.fontBold ]} >{props.ocupation}</Text>
             </Text>
-        </Text>
-        </View>
-        
-        {/* Price + Details */}
-        <View style = { [ css.rowOrientation, { marginTop:10 } ]}>
-        <View style = { [ css.centerVerticaly, css.centerChildren , { width: '50%' }] }>
-            <Text style={ [ css.size18, css.textWhite, css.fontGhotic ]}>R$ {props.price}</Text>
-        </View>
 
-        <View style = { [ css.centerVerticaly, css.centerChildren, { width: '50%' } ] }>
-            <TouchableOpacity 
-            onPress={()=>props.navigation.navigate('TradePostDetailed', {
-                postId: props.post_id ,                
-            })}
-            style={[ 
-                css.buttonDefault, { width: '90%' } 
-            ]}
-            >
-            <Text style={ [ css.textWhite, css.size15, css.fontGhotic ] }>Detalhes</Text>
-            </TouchableOpacity>
+            <Text style={[
+                css.textBlack,
+                css.size14,
+                css.m_OneY ,
+            ]}>
+                Remuneração: <Text style={[ css.textRed, css.size16, css.fontBold ]} >{formatedWage}</Text>
+            </Text>
+            
         </View>
-        </View>
-    </View>
-    </View>
-);    
+    );
 };
 
-const SearchCps = (props) => {
+const SearchCps = ( { route, navigation } ) => {
 
-// TradePost Hooks
-const [errorMessage, setErrorMessage] = useState(null);
-const [tradePostList, setTradePostList] = useState([]);
+    const { maxSal, minSal, ocupation, personName } = route.params;
 
-// User Data
-const [userEmail        , setUserEmail]     = useState(null);
-const [userProfilePic   , setProfilePic]    = useState(null);
-const [userPass         , setUserPass]      = useState(null);
-const [userId           , setUserID]        = useState(null);
-const [userName         , setUserName]      = useState(null);
+    // TradePost Hooks
+    const [errorMessage , setErrorMessage] = useState(null);
+    const [searchList   , setSearchList] = useState([]);
 
-// Iterate
-var counter = 0;
-var lastId  = 0;
+    // Iterate
+    var counter = 0;    
 
-// Lista Anúncios
-async function listTradePosts() {
-
-    let tokenUrl  = '16663056-351e723be15750d1cc90b4fcd' ;
-    let route    = '/trade_posts.php/?token=' + tokenUrl + '&key=all';
-    // let route     = '/trade_posts.php/?token=' + tokenUrl + '&key=224';
-
-    try {
-    const response = await api.get(route);
-
-    let a_Values = response.data;
+    // Lista Anúncios
     
-    // Doesn't replace
-    tradePostList.length == 0 && setTradePostList( a_Values );
+
+    // Similar ao componentDidMount e componentDidUpdate: 
+    useEffect(() => {
+        async function searchRequest() {
+
+            let tokenUrl  = '16663056-351e723be15750d1cc90b4fcd' ;
+            let route    = '/Remuneracao/?token=' + tokenUrl + '&name=' + personName + '&ocupation=' + ocupation + '&minSal=' + minSal + '&maxSal=' + maxSal;
     
-    } catch (response) {
-    if ( response.data.msg ) {
-        setErrorMessage("Erro: " + response.data.msg);
-    } else {
-        setErrorMessage("Erro Inesperado!");
-    }        
-
-    }
-}
-
-// Similar ao componentDidMount e componentDidUpdate: 
-useEffect( async () => {
-    await listTradePosts();
+            try {
+                const response = await api.get(route);
     
-    const userEmailSession      = await AsyncStorageLib.getItem('@MTC:userEmail');
-    const userProfilePicSession = await AsyncStorageLib.getItem('@MTC:userProfilePic');
-    const userPasswordSession   = await AsyncStorageLib.getItem('@MTC:userPassword');
-    const userIDSession         = await AsyncStorageLib.getItem('@MTC:userID');
-    const userNameSession       = await AsyncStorageLib.getItem('@MTC:userName');
+                let a_Values = response.data;
+                
+                // Doesn't replace
+                searchList.length == 0 && setSearchList( a_Values );
+                                
+                console.log(searchList);
 
-    // console.log( 'TradePosts.js' + userEmailSession + " - " + userProfilePicSession + ' - ' + userPasswordSession + ' - ' + userIDSession + ' - ' + userNameSession);
-
-    if ( userEmailSession && userProfilePicSession && userPasswordSession && userIDSession && userNameSession )            
-    setUserEmail(userEmailSession);
-    setProfilePic(userProfilePicSession);
-    setUserPass(userPasswordSession);
-    setUserID(userIDSession);
-    setUserName(userNameSession);
-});
-
-// Loading
-if (tradePostList.length == 0 && !errorMessage)
-    return (
-    <View style={css.container}>
-        <HeaderDefault 
-        title="Anúncios"          
-        userName={userName}
-        userPhotoURL={userProfilePic}
-        userEmail={userEmail}  
-        userPass={userPass}
-        userId={userId}
-        hideRightIcon={true}
-        navigation={props.navigation}
-        />
-        <LoadingIcon/>
-    </View>
-    ) ;
-
-// Just Like 'Render' method
-return (
-    <View style={css.container}>
+                if ( searchList.data === null ) {
+                    setErrorMessage("Erro: " + response.data.msg);
+                }     
             
-    {/* Header */}
-    <HeaderDefault 
-        title="Anúncios"          
-        userName={userName}
-        userPhotoURL={userProfilePic}
-        userEmail={userEmail}  
-        userPass={userPass}
-        userId={userId}
-        hideRightIcon={false}
-        navigation={props.navigation}
-    />
+            } catch (response) {
+                if ( response.data.msg ) {
+                    setErrorMessage("Erro: " + response.data.msg);
+                } else {
+                    setErrorMessage("Erro Inesperado!");
+                }
+    
+            }
+        }
+        
+        searchRequest();
+    });
 
-    {/* Log Messages */}      
-    { !!errorMessage &&
-        <View style={ [ css.container, css.centerVerticaly, css.centerChildren ] }>
-        <Text style={ [css.size20, css.textWhite, css.fontBold,  { marginVertical: 20 } ] }>
-            Desculpe, não conseguimos nos Conectar!
-        </Text>
-        <Text style={ [css.size22, css.textWhite, { marginVertical: 20 } ] }>
-            ¯\_(ツ)_/¯
-        </Text>
-        <Text style={ [css.size18, css.textRed, css.fontBold,  { marginVertical: 20 } ] }>
-            { errorMessage }
-        </Text>
+    // Loading
+    if (searchList.length == 0 && !errorMessage)
+        return (
+        <View style={css.container}>
+            <LoadingIcon/>
         </View>
-    }
+        ) ;    
+    
+    return (
+        <View style = {[
+            css.container ,
+            { height: '92%' }
+        ]}>
 
-    {/* Trade Posts List */}
-    { !errorMessage && 
-        <SafeAreaView style={ [ css.flexOne, css.m_ThreeTop ] }>
-        <ScrollView>
-
-            {
-            tradePostList.data.map(function(tpRow) {
-                // Pula Repetidos (por imagem)
-                if (lastId == tpRow.post_id)
-                return null;
-
-                //check if the number is Even or Odd
-                var isEven = (counter % 2 == 0 ? true : false);
-
-                counter++;
-                lastId = tpRow.post_id;              
-
-                return (
-                <View key={lastId.toString()}>
-                    <TpRow
-                    post_id={tpRow.post_id}
-                    title={tpRow.title}
-                    description={tpRow.tp_desc}
-                    cateogory={tpRow.pc_desc}
-                    creator={tpRow.user_name}                    
-                    price={tpRow.price}
-                    uri={tpRow.image_name}
-                    rowReverse={ isEven ? false : true }
-                    navigation={props.navigation}
-                    />
-
-                    <View style={ css.hrDefault } />
-
+            {/* Log Messages */}
+            { !!errorMessage &&
+                <View style={[ 
+                    css.container, 
+                    css.centerVerticaly, 
+                    css.centerChildren 
+                ]}>                
+                    <Text style={ [css.size18, css.textBlack, css.fontBold,  { marginVertical: 20 } ] }>
+                        Desculpe, não conseguimos nos Conectar!
+                    </Text>
+                    <Text style={ [css.size20, css.textBlack, { marginVertical: 20 } ] }>
+                        ¯\_(ツ)_/¯
+                    </Text>
+                    <Text style={ [css.size16, css.textRed, css.fontBold,  { marginVertical: 20 } ] }>
+                        { errorMessage }
+                    </Text>
                 </View>
-                );                            
-            })
-            }            
+            }
 
-            {/* Horizontal Line */}
-            {/* <View style={ css.hrDefault } /> */}        
-        </ScrollView>
-        </SafeAreaView> 
-    }     
+            {/* Trade Posts List */}
+            { (!errorMessage && searchList.data != null ) && 
+                <SafeAreaView style={ [ css.flexOne ] }>
+                    {/* Results Lenght */}
+                    <View style = {[
+                        css.centerVerticaly ,
+                        { 
+                            height: '6%',
+                        }
+                    ]}>
+                        <Text style={[
+                            css.textBlack ,
+                            css.endtHorizontaly ,
+                            css.size12 ,
+                            css.m_TwoRight ,
+                        ]}>
+                            Nº resultados: {searchList.data.length}
+                        </Text>
+                    </View>
+                    <ScrollView>
+                        {
+                        searchList.data.map(function(searchRow) {
 
-    </View>  
-);
+                            return (
+                                <View key={Math.floor(Math.random() * 100000).toString()}>
+                                    <ResultRow
+                                        name={searchRow.nome}
+                                        ocupation={searchRow.cargo}
+                                        wage={searchRow.remuneracao}
+                                    />
+
+                                    <View style={ css.hrDefault } />
+                                </View>
+                            );
+                        })
+                        }
+                    </ScrollView>
+                </SafeAreaView> 
+            }
+            {/* Developed By */}
+            <View style = {[
+                css.centerVerticaly ,
+                { 
+                    height: '8%',
+                    borderTopColor: '#939494',
+                    borderTopWidth: .5,
+                }
+            ]}>
+                <TouchableOpacity
+                    onPress={() => Linking.openURL('https://github.com/vinicius-lessa')}
+                >
+                    <Text style={ [css.textBlack, css.centerText, css.size12] }>
+                        Developed by                     
+                        <Text style={[ 
+                            css.fontBold ,
+                            css.textRed ,
+                        ]}> LessLax</Text>
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }
 
 export default SearchCps;
